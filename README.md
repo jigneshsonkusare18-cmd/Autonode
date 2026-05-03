@@ -105,3 +105,23 @@ AutoNode solves these issues by automating the entire workflow using Ansible.
 ---
 
 ## 📂 Project Structure
+
+autonode/
+│── README.md
+│── .gitignore
+│── requirements.txt
+│
+├── ansible/
+│   ├── inventory.ini
+│   ├── playbook.yml
+│   ├── vars.yml
+│
+├── app/
+│   ├── package.json
+│   └── server.js
+│
+├── configs/
+│   └── nginx.conf
+│
+└── scripts/
+    └── deploy.sh
