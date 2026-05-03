@@ -1,0 +1,54 @@
+const express = require('express');
+const os = require('os');
+
+const app = express();
+
+// Middleware
+app.use(express.json());
+
+// Root route
+app.get('/', (req, res) => {
+    res.json({
+        message: '🚀 AutoNode Deployment Successful',
+        system: {
+            hostname: os.hostname(),
+            platform: os.platform(),
+            uptime: os.uptime(),
+            cpus: os.cpus().length,
+            memory: {
+                total: os.totalmem(),
+                free: os.freemem()
+            }
+        }
+    });
+});
+
+// Health check
+app.get('/health', (req, res) => {
+    res.status(200).json({
+        status: 'OK',
+        timestamp: new Date()
+    });
+});
+
+// Simulated workload route
+app.get('/load', (req, res) => {
+    let sum = 0;
+    for (let i = 0; i < 1e6; i++) {
+        sum += i;
+    }
+    res.json({ result: sum });
+});
+
+// Error handling
+app.use((err, req, res, next) => {
+    res.status(500).json({
+        error: 'Internal Server Error'
+    });
+});
+
+const PORT = 3000;
+
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
