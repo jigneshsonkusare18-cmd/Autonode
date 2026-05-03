@@ -1,0 +1,10 @@
+app_name: autonode
+app_dir: /opt/autonode
+app_port: 3000
+
+packages:
+  - curl
+  - git
+  - unzip
+  - build-essential
+  - nginx
