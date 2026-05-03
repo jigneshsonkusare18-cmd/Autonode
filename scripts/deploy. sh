@@ -1,0 +1,13 @@
+#!/bin/bash
+
+echo "====================================="
+echo "     AutoNode Deployment Started     "
+echo "====================================="
+
+cd ../ansible || exit
+
+ansible-playbook -i inventory.ini playbook.yml
+
+echo "====================================="
+echo "     Deployment Completed ✅          "
+echo "====================================="
