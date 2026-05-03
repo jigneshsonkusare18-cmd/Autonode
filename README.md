@@ -55,3 +55,53 @@ AutoNode solves these issues by automating the entire workflow using Ansible.
 ---
 
 ## 🏗️ System Architecture
+---
+
+## ⚙️ Technologies Used
+
+### 🔹 Ansible
+- Core automation tool
+- Executes playbooks to configure systems
+- Agentless architecture (no installation required on target machines)
+
+### 🔹 Node.js
+- Backend application runtime
+- Lightweight server used for deployment demonstration
+
+### 🔹 NGINX
+- Reverse proxy server
+- Handles incoming HTTP requests and forwards to Node app
+
+### 🔹 Docker
+- Containerization platform
+- Installed for future scalability and container-based deployment
+
+### 🔹 PM2
+- Process manager for Node.js
+- Keeps application running continuously
+- Enables restart and monitoring
+
+### 🔹 UFW (Uncomplicated Firewall)
+- Security tool for managing firewall rules
+- Allows controlled access (HTTP, SSH)
+
+---
+
+## 🔄 Workflow (Step-by-Step Execution)
+
+1. User runs deployment script
+2. Ansible connects to the target system
+3. System packages are updated
+4. Required tools are installed (Git, Curl, NGINX, etc.)
+5. Node.js is installed and configured
+6. Docker is installed and started
+7. Firewall rules are applied (SSH, HTTP allowed)
+8. Application files are copied to server
+9. Dependencies are installed using npm
+10. Application is started using PM2
+11. NGINX is configured as reverse proxy
+12. Services are restarted and verified
+
+---
+
+## 📂 Project Structure
