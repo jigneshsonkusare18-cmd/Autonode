@@ -1,0 +1,123 @@
+- name: AutoNode Complete Automation
+  hosts: servers
+  become: true
+
+  vars_files:
+    - vars.yml
+
+  tasks:
+
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Upgrade system packages
+      apt:
+        upgrade: dist
+
+    - name: Install required system packages
+      apt:
+        name: "{{ packages }}"
+        state: present
+
+    # ---------------- NODE SETUP ----------------
+
+    - name: Add NodeSource repository
+      shell: curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+      args:
+        executable: /bin/bash
+
+    - name: Install Node.js
+      apt:
+        name: nodejs
+        state: present
+
+    - name: Install PM2 globally
+      npm:
+        name: pm2
+        global: yes
+
+    # ---------------- DOCKER SETUP ----------------
+
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: present
+
+    - name: Start Docker service
+      service:
+        name: docker
+        state: started
+        enabled: true
+
+    # ---------------- SECURITY ----------------
+
+    - name: Install firewall
+      apt:
+        name: ufw
+        state: present
+
+    - name: Allow SSH
+      ufw:
+        rule: allow
+        name: OpenSSH
+
+    - name: Allow HTTP
+      ufw:
+        rule: allow
+        port: 80
+
+    - name: Enable firewall
+      ufw:
+        state: enabled
+
+    # ---------------- APP DEPLOYMENT ----------------
+
+    - name: Create app directory
+      file:
+        path: "{{ app_dir }}"
+        state: directory
+
+    - name: Copy application files
+      copy:
+        src: ../app/
+        dest: "{{ app_dir }}"
+
+    - name: Install Node dependencies
+      npm:
+        path: "{{ app_dir }}"
+
+    - name: Stop existing app if running
+      shell: pm2 delete autonode || true
+
+    - name: Start app using PM2
+      shell: pm2 start server.js --name autonode
+      args:
+        chdir: "{{ app_dir }}"
+
+    - name: Save PM2 process list
+      shell: pm2 save
+
+    # ---------------- NGINX ----------------
+
+    - name: Copy nginx config
+      copy:
+        src: ../configs/nginx.conf
+        dest: /etc/nginx/sites-available/autonode
+
+    - name: Enable nginx site
+      file:
+        src: /etc/nginx/sites-available/autonode
+        dest: /etc/nginx/sites-enabled/autonode
+        state: link
+        force: yes
+
+    - name: Remove default nginx config
+      file:
+        path: /etc/nginx/sites-enabled/default
+        state: absent
+
+    - name: Restart nginx
+      service:
+        name: nginx
+        state: restarted
